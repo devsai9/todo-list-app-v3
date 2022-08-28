@@ -128,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setUpListViewListener();
+        removeTodo();
+        editTodo();
     }
 
     // Task Adder
@@ -163,23 +164,25 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent getIntent = getIntent();
                 String newTodoText = getIntent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
-                todos.set(position, newTodoText);
 
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        invokeDatabase.getAppDatabase().todoListDao().findToDoWithToDoString(previousTodoText);
-
+                        invokeDatabase.getAppDatabase().todoListDao().updateTodo(previousTodoText, newTodoText);
                     }
                 });
+                thread.start();
 
+                todos.set(position, newTodoText);
+
+                Toast.makeText(MainActivity.this, "Edited " + previousTodoText + " to be " + newTodoText, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
     }
 
     // Task Remover
-    private void setUpListViewListener() {
+    private void removeTodo() {
         todosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

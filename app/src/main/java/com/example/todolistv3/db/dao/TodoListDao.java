@@ -24,8 +24,8 @@ public interface TodoListDao {
     @Query("SELECT * FROM ToDoEntity WHERE todo LIKE :search")
     ToDoEntity findToDoWithToDoString(String search);
 
-    @Query("SELECT * FROM ToDoEntity WHERE id = :Id")
-    ToDoEntity findToDoWithIdNum(double Id);
+    @Query("UPDATE ToDoEntity SET todo = :newTodoValue WHERE todo = :previousTodoValue")
+    void updateTodo(String previousTodoValue, String newTodoValue);
 
     @Insert
     void insertAll(ToDoEntity... toDoEntities);
