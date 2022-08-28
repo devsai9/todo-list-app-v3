@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         // this is what is being captured from the UI as input from the user
         todos = new ArrayList<>();
-        todosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, todos);
+        todosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, todos);
         todosList.setAdapter(todosAdapter);
 
         Thread thread2 = new Thread(new Runnable() {
@@ -134,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
     // Task Remover
 
     private void setUpListViewListener() {
-        todosList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        todosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String removedTodo = todos.get(position);
 
                 Thread thread = new Thread(new Runnable() {
@@ -154,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 todosAdapter.notifyDataSetChanged();
 
                 Toast.makeText(MainActivity.this, "Todo to " + removedTodo +  " removed", Toast.LENGTH_SHORT).show();
-                return true;
             }
         });
     }
