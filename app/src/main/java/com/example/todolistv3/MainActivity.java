@@ -131,8 +131,54 @@ public class MainActivity extends AppCompatActivity {
         setUpListViewListener();
     }
 
-    // Task Remover
+    // Task Adder
+    private String addTodo() {
+        EditText addTodoEditText = findViewById(R.id.addItemEditText);
+        String editTextText = addTodoEditText.getText().toString();
 
+        if (editTextText.equals("") || editTextText == null) {
+            Toast.makeText(this, "Can not add an empty todo :(", Toast.LENGTH_SHORT).show();
+        } else if (todos.contains(editTextText)) {
+            Toast.makeText(this, "Can not have duplicate todos :(", Toast.LENGTH_SHORT).show();
+        } else {
+            todos.add(editTextText);
+            todosAdapter.add(editTextText);
+            todosAdapter.notifyDataSetChanged();
+
+            Toast.makeText(this, "Added Todo to " + editTextText + " :)", Toast.LENGTH_SHORT).show();
+            addTodoEditText.setText("");
+        }
+        return editTextText;
+    }
+
+    // Task Editor
+    private void editTodo() {
+        todosList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(getApplicationContext(), EditTodoActivity.class);
+                String previousTodoText = todos.get(position);
+                intent.putExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT", previousTodoText);
+                startActivity(intent);
+
+                Intent getIntent = getIntent();
+                String newTodoText = getIntent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
+                todos.set(position, newTodoText);
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        invokeDatabase.getAppDatabase().todoListDao().findToDoWithToDoString(previousTodoText);
+
+                    }
+                });
+
+                return true;
+            }
+        });
+    }
+
+    // Task Remover
     private void setUpListViewListener() {
         todosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -156,26 +202,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Todo to " + removedTodo +  " removed", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    // Task Adder
-
-    private String addTodo() {
-        EditText addTodoEditText = findViewById(R.id.addItemEditText);
-        String editTextText = addTodoEditText.getText().toString();
-
-        if (editTextText.equals("") || editTextText == null) {
-            Toast.makeText(this, "Can not add an empty todo :(", Toast.LENGTH_SHORT).show();
-        } else if (todos.contains(editTextText)) {
-            Toast.makeText(this, "Can not have duplicate todos :(", Toast.LENGTH_SHORT).show();
-        } else {
-            todos.add(editTextText);
-            todosAdapter.add(editTextText);
-            todosAdapter.notifyDataSetChanged();
-
-            Toast.makeText(this, "Added Todo to " + editTextText + " :)", Toast.LENGTH_SHORT).show();
-            addTodoEditText.setText("");
-        }
-        return editTextText;
     }
 }
