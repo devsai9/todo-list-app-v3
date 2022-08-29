@@ -19,6 +19,7 @@ public class EditTodoActivity extends AppCompatActivity {
         // Get the Intent that started this activity and extract the string
         Intent getIntent = getIntent();
         String previousTodoText = getIntent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
+        int position = getIntent.getIntExtra("com.example.todolistv3.POSITION", 0);
 
         // Capture the layout's TextView and set previousTodoText as its text
         TextView textView = findViewById(R.id.previousTodoTextView);
@@ -34,7 +35,10 @@ public class EditTodoActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("com.example.todolistv3.NEW_TODO_TEXT", newTodoText);
-                startActivity(intent);
+                intent.putExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT", previousTodoText);
+                intent.putExtra("com.example.todolistv3.POSITION", position);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
     }

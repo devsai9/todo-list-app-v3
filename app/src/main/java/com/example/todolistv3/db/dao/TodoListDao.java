@@ -27,6 +27,9 @@ public interface TodoListDao {
     @Query("UPDATE ToDoEntity SET todo = :newTodoValue WHERE todo = :previousTodoValue")
     void updateTodo(String previousTodoValue, String newTodoValue);
 
+    @Query("DELETE FROM todoentity")
+    public void deleteAll();
+
     @Insert
     void insertAll(ToDoEntity... toDoEntities);
 

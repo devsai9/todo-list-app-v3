@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> todosAdapter;
     private InvokeDatabase invokeDatabase;
     private int idNum = -1;
+    private final int REQUEST_NEW_TODO_TEXT = 0;
 
     @Override
     protected void onStart() {
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(controlsActivityIntent);
                 return true;
             case R.id.about:
-                // TODO: Launch About Activity
                 Intent aboutActivityIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutActivityIntent);
                 return true;
@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // onCreate method
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,15 +91,17 @@ public class MainActivity extends AppCompatActivity {
 
         // this is what is being captured from the UI as input from the user
         todos = new ArrayList<>();
-        todosAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, todos);
+        todosAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item_multiple_choice_trash_icon, todos);
         todosList.setAdapter(todosAdapter);
 
         Thread thread2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                todos = invokeDatabase.getAppDatabase().todoListDao().getAll().stream().map(s-> s.todo).collect(Collectors.toList());
-                todosAdapter.clear();
-                todos.stream().forEach(t -> todosAdapter.add(t));
+                //invokeDatabase.getAppDatabase().todoListDao().deleteAll();
+                todos = invokeDatabase.getAppDatabase().todoListDao().getAll().stream().map(t -> t.todo).collect(Collectors.toList());
+                for (int i = 0; i < todos.size(); i++) {
+                    todosAdapter.add(todos.get(i));
+                }
                 idNum = todos.size();
             }
         });
@@ -112,15 +113,14 @@ public class MainActivity extends AppCompatActivity {
                 String text = addTodo();
 
                     ToDoEntity toDoEntity = new ToDoEntity();
-                    idNum++;
-                    toDoEntity.id = idNum;
+                    idNum = idNum + 1;
+                    toDoEntity.id = idNum + 1;
                     toDoEntity.todo = text;
                     // create the TodoEntity object and use the below code to save it in the db.
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             invokeDatabase.getAppDatabase().todoListDao().insertAll(toDoEntity);
-
                         }
                     });
                     thread.start();
@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             todos.add(editTextText);
             todosAdapter.add(editTextText);
-            todosAdapter.notifyDataSetChanged();
 
             Toast.makeText(this, "Added Todo to " + editTextText + " :)", Toast.LENGTH_SHORT).show();
             addTodoEditText.setText("");
@@ -158,27 +157,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(getApplicationContext(), EditTodoActivity.class);
-                String previousTodoText = todos.get(position);
+                String previousTodoText = todosList.getItemAtPosition(position).toString();
                 intent.putExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT", previousTodoText);
-                startActivity(intent);
+                intent.putExtra("com.example.todolistv3.POSITION", position);
+                startActivityForResult(intent, REQUEST_NEW_TODO_TEXT);
 
-                Intent getIntent = getIntent();
-                String newTodoText = getIntent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
-
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        invokeDatabase.getAppDatabase().todoListDao().updateTodo(previousTodoText, newTodoText);
-                    }
-                });
-                thread.start();
-
-                todos.set(position, newTodoText);
-
-                Toast.makeText(MainActivity.this, "Edited " + previousTodoText + " to be " + newTodoText, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == REQUEST_NEW_TODO_TEXT) {
+            String previousTodoText = intent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
+            String newTodoText = intent.getStringExtra("com.example.todolistv3.NEW_TODO_TEXT");
+            int position = intent.getIntExtra("com.example.todolistv3.POSITION", 0);
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    invokeDatabase.getAppDatabase().todoListDao().updateTodo(previousTodoText, newTodoText);
+                }
+            });
+            thread.start();
+
+            todos.set(position, newTodoText);
+            todosAdapter.clear();
+            for (int i = 0; i < todos.size(); i++) {
+                todosAdapter.add(todos.get(i));
+            }
+
+            Toast.makeText(MainActivity.this, "Edited " + previousTodoText + " to be " + newTodoText, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Task Remover

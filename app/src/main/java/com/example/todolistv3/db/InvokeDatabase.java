@@ -26,7 +26,7 @@ public class InvokeDatabase {
      * @return
      */
     public AppDatabase getAppDatabase(){
-        AppDatabase db = Room.databaseBuilder(applicationContext,
+        AppDatabase db = Room.databaseBuilder(applicationContext.getApplicationContext(),
                 AppDatabase.class, "db-todo")
                 .fallbackToDestructiveMigration()
                 .build();
