@@ -19,4 +19,8 @@
         <item name="android:textCursorDrawable">@color/white</item>
         <item name="android:backgroundTint">@color/white</item>
     </style>
+
+    <style name="Theme.simple_list_item_multiple_choice_trash_icon.Layout" parent="Theme.AppCompat">
+        <item name="android:checkMarkTint">@color/white</item>
+    </style>
 </resources>

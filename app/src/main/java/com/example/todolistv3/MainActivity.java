@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -94,12 +95,17 @@ public class MainActivity extends AppCompatActivity {
         todosAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item_multiple_choice_trash_icon, todos);
         todosList.setAdapter(todosAdapter);
 
+        todosList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
         Thread thread2 = new Thread(new Runnable() {
             @Override
             public void run() {
                 //invokeDatabase.getAppDatabase().todoListDao().deleteAll();
                 todos = invokeDatabase.getAppDatabase().todoListDao().getAll().stream().map(t -> t.todo).collect(Collectors.toList());
                 for (int i = 0; i < todos.size(); i++) {
+                    if (todos.get(i) == null) {
+                        todos.set(i, "");
+                    }
                     todosAdapter.add(todos.get(i));
                 }
                 idNum = todos.size();
@@ -161,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT", previousTodoText);
                 intent.putExtra("com.example.todolistv3.POSITION", position);
                 startActivityForResult(intent, REQUEST_NEW_TODO_TEXT);
-
                 return true;
             }
         });
@@ -171,31 +176,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == REQUEST_NEW_TODO_TEXT) {
-            String previousTodoText = intent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
-            String newTodoText = intent.getStringExtra("com.example.todolistv3.NEW_TODO_TEXT");
-            int position = intent.getIntExtra("com.example.todolistv3.POSITION", 0);
+            if (resultCode == RESULT_OK) {
+                String previousTodoText = intent.getStringExtra("com.example.todolistv3.PREVIOUS_TODO_TEXT");
+                String newTodoText = intent.getStringExtra("com.example.todolistv3.NEW_TODO_TEXT");
+                int position = intent.getIntExtra("com.example.todolistv3.POSITION", 0);
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    invokeDatabase.getAppDatabase().todoListDao().updateTodo(previousTodoText, newTodoText);
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        invokeDatabase.getAppDatabase().todoListDao().updateTodo(previousTodoText, newTodoText);
+                    }
+                });
+                thread.start();
+
+                todos.set(position, newTodoText);
+                todosAdapter.clear();
+                for (int i = 0; i < todos.size(); i++) {
+                    todosAdapter.add(todos.get(i));
                 }
-            });
-            thread.start();
 
-            todos.set(position, newTodoText);
-            todosAdapter.clear();
-            for (int i = 0; i < todos.size(); i++) {
-                todosAdapter.add(todos.get(i));
+                Toast.makeText(MainActivity.this, "Edited " + previousTodoText + " to be " + newTodoText, Toast.LENGTH_SHORT).show();
             }
-
-            Toast.makeText(MainActivity.this, "Edited " + previousTodoText + " to be " + newTodoText, Toast.LENGTH_SHORT).show();
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Edit Operation canceled by user", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     // Task Remover
     private void removeTodo() {
-        todosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /* todosList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String removedTodo = todos.get(position);
@@ -216,6 +226,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, "Todo to " + removedTodo +  " removed", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
     }
 }

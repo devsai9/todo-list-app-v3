@@ -29,10 +29,20 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" To delete a todo: \n        Tap on it"
         android:layout_below="@+id/toViewAllYourTodos"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:textSize="18sp"/>
+        android:text=" To delete a todo: \n        Tap on it"
+        android:id="@+id/toDeleteATodo"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toDeleteATodo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="    To edit a todo: \nTap and hold on it"
+        android:textSize="18sp" />
 
 </RelativeLayout>

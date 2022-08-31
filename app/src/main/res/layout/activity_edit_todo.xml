@@ -31,21 +31,23 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/previousTodoTextHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:text="Previous Todo Text:"
-                android:layout_centerInParent="true"
-                android:textSize="17sp"
-
-                android:id="@+id/previousTodoTextHeader"/>
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/previousTodoTextHeader"
                 android:layout_centerHorizontal="true"
-                android:textSize="15sp"
-                android:id="@+id/previousTodoTextView"/>
+                android:layout_below="@+id/previousTodoTextHeader"
+                android:textSize="17sp"
+                android:id="@+id/previousTodoTextView"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"/>
 
         </RelativeLayout>
 
@@ -66,13 +68,13 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/newTodoTextHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:text="New Todo Text:"
-                android:textSize="20sp"
-                android:id="@+id/newTodoTextHeader"
-                android:layout_marginTop="10dp"/>
+                android:textSize="20sp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -81,14 +83,30 @@
                 android:layout_marginHorizontal="20dp"
                 android:id="@+id/newTodoEditText"/>
 
-            <Button
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/newTodoEditText"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:text="Save"
-                android:id="@+id/save"/>
+                android:layout_marginBottom="10dp">
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="Cancel"
+                    android:backgroundTint="#cccccc"/>
+
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/cancel"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 

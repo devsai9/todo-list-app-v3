@@ -13,4 +13,8 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.simple_list_item_multiple_choice_trash_icon.Layout" parent="Theme.AppCompat.Light">
+        <item name="android:checkMarkTint">@color/black</item>
+    </style>
 </resources>

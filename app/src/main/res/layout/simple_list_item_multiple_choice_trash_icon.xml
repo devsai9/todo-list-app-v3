@@ -8,4 +8,5 @@
     android:gravity="center_vertical"
     android:checkMark="@drawable/ic_clipart_delete"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd" />
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+    style="@style/Theme.simple_list_item_multiple_choice_trash_icon.Layout"/>
